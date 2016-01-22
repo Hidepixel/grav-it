@@ -1,8 +1,7 @@
 ﻿using UnityEngine;
-using UnityEngine.Networking;
 using System.Collections;
 
-public class NewBehaviourScript : NetworkBehaviour {
+public class NewBehaviourScript : MonoBehaviour {
 
   public float maxSpeed = 10f;
 
@@ -10,8 +9,6 @@ public class NewBehaviourScript : NetworkBehaviour {
 	}
 	
 	void Update () {
-    if(!isLocalPlayer) return;
-
     float move = Input.GetAxis("Horizontal");
 
     Rigidbody2D rigidBody = GetComponent<Rigidbody2D>();
