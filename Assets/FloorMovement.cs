@@ -1,36 +1,44 @@
 ﻿using UnityEngine;
-using System.Collections;
 
-public class FloorMovement : MonoBehaviour {
+namespace Assets
+{
+    public class FloorMovement : MonoBehaviour {
 
-  public Vector3 startPosition;
-  public Vector3 endPosition;
-  public float speed;
+        public Vector3 startPosition;
+        public Vector3 endPosition;
+        public float speed;
 
-  private float startTime;
-  private float journeyLength;
+        private float startTime;
+        private float journeyLength;
 
-	void Start () {
-    startTime = Time.time;
-    journeyLength = Vector3.Distance(startPosition, endPosition);
-	}
+        void Awake()
+        {
+            startPosition = new Vector3(transform.position.x , transform.position.y - 5);
+            endPosition = new Vector3(transform.position.x, transform.position.y + 5);
+        }
 
-	void FixedUpdate () {
-    float distanceCovered = (Time.time - startTime) * speed;
-    float frac = distanceCovered / journeyLength;
+        void Start () {
+            startTime = Time.time;
+            journeyLength = Vector3.Distance(startPosition, endPosition);
+        }
 
-    transform.position = Vector3.Lerp(startPosition, endPosition, frac);
+        void FixedUpdate () {
+            float distanceCovered = (Time.time - startTime) * speed;
+            float frac = distanceCovered / journeyLength;
 
-    float distance = Vector3.Distance(transform.position, endPosition);
-    if(distance == 0) {
-      Flip();
+            transform.position = Vector3.Lerp(startPosition, endPosition, frac);
+
+            float distance = Vector3.Distance(transform.position, endPosition);
+            if(distance == 0) {
+                Flip();
+            }
+        }
+
+        void Flip() {
+            Vector3 aux = startPosition;
+            startPosition = endPosition;
+            endPosition = aux;
+            startTime = Time.time;
+        }
     }
-	}
-
-  void Flip() {
-    Vector3 aux = startPosition;
-    startPosition = endPosition;
-    endPosition = aux;
-    startTime = Time.time;
-  }
 }
