@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
@@ -7,6 +8,9 @@ namespace Assets
 {
     public class LevelGenerator : MonoBehaviour
     {
+        public GameObject Player;
+        private List<GameObject> _playerList;
+        private int _numberOfPlayers;
 
         private const int MapWidth = 25;
         private const int MapHeight = 10;
@@ -28,6 +32,8 @@ namespace Assets
 
         void Awake()
         {
+            _playerList = new List<GameObject>();
+            _numberOfPlayers = 0;
             GenerateLevel();
         }
 
@@ -41,19 +47,19 @@ namespace Assets
                 {1,0,0,2,0,0,0,0,0,1 },
                 {1,0,0,2,0,1,0,0,0,1 },
                 {1,0,0,0,0,1,1,0,0,1 },
-                {1,0,0,0,0,0,0,0,0,1 },
+                {1,0,50,0,0,0,0,0,0,1 },
                 {1,0,0,0,0,0,0,0,0,1 },
                 {1,0,0,4,0,0,0,0,0,1 },
                 {1,0,0,0,3,3,3,0,0,1 },
                 {1,0,0,0,0,0,0,0,0,1 },
                 {1,0,0,0,0,4,0,0,0,1 },
                 {1,0,0,0,0,0,0,0,0,1 },
-                {1,0,0,2,0,0,0,0,0,1 },
+                {1,0,0,2,0,0,50,0,0,1 },
                 {1,0,0,2,0,1,0,0,0,1 },
                 {1,0,0,0,0,1,1,0,0,1 },
                 {1,0,0,0,0,0,0,0,0,1 },
                 {1,0,0,1,1,0,0,0,0,1 },
-                {1,0,0,0,0,0,0,0,0,1 },
+                {1,0,0,0,0,50,0,0,0,1 },
                 {1,0,0,0,0,0,0,0,0,1 },
                 {1,0,0,0,0,1,0,0,0,1 },
                 {1,0,0,0,0,1,0,0,0,1 },
@@ -67,7 +73,14 @@ namespace Assets
             {
                 for (int y = 0; y < _levelCoordinateSystem.GetLength(1); y++)
                 {
-                    if (_levelCoordinateSystem[x, y] != 0)
+                    if (_levelCoordinateSystem[x, y] == 50)
+                    {
+                        GameObject newPlayer = Instantiate(Player, new Vector3(x, y), Quaternion.identity) as GameObject;
+                        newPlayer.GetComponent<PlayerController>().Id = _numberOfPlayers;
+                        _playerList.Add(newPlayer);
+                        _numberOfPlayers++;
+                    }
+                    else if (_levelCoordinateSystem[x, y] != 0)
                     {
                         BlockType blockType = BlockTypes.FirstOrDefault(b => b.BlockId == _levelCoordinateSystem[x, y]);
                         GameObject newBlockObject = blockType.Block;
@@ -80,7 +93,28 @@ namespace Assets
                     }
                 }
             }
-        
+            switch (_playerList.Count)
+            {
+                case 1:
+                    _playerList[0].GetComponent<PlayerController>().PlayerCamera.rect = new Rect(0, 0, 1, 1);
+                    break;
+                case 2:
+                    _playerList[0].GetComponent<PlayerController>().PlayerCamera.rect = new Rect(0, 0, 0.5f, 1);
+                    _playerList[1].GetComponent<PlayerController>().PlayerCamera.rect = new Rect(0.5f, 0, 0.5f, 1);
+                    break;
+                case 3:
+                    _playerList[0].GetComponent<PlayerController>().PlayerCamera.rect = new Rect(0, 0, 0.5f, 1);
+                    _playerList[1].GetComponent<PlayerController>().PlayerCamera.rect = new Rect(0.5f, 0, 0.5f, 0.5f);
+                    _playerList[2].GetComponent<PlayerController>().PlayerCamera.rect = new Rect(0.5f, 0.5f, 0.5f, 0.5f);
+                    break;
+                case 4:
+                    _playerList[0].GetComponent<PlayerController>().PlayerCamera.rect = new Rect(0, 0, 0.5f, 0.5f);
+                    _playerList[1].GetComponent<PlayerController>().PlayerCamera.rect = new Rect(0.5f, 0, 0.5f, 0.5f);
+                    _playerList[2].GetComponent<PlayerController>().PlayerCamera.rect = new Rect(0, 0.5f, 0.5f, 0.5f);
+                    _playerList[3].GetComponent<PlayerController>().PlayerCamera.rect = new Rect(0.5f, 0.5f, 0.5f, 0.5f);
+                    break;
+            }
+            
         }
 
         private Color GenerateColors(Color color,float minOffset, float maxOffset)

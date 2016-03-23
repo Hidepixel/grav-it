@@ -1,26 +1,30 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace Assets
 {
     public class CameraFollow : MonoBehaviour
     {
-
-        public Camera Camera;
         public GameObject Player;
-        private GameObject _newPlayer;
+        private List<GameObject> _playerList;
+        public int NumberOfPlayers;
 
         // Use this for initialization
         void Start ()
         {
-
-            Camera.transform.position = new Vector3(Player.transform.position.x, Player.transform.position.y, Camera.transform.position.z);
-            _newPlayer = Instantiate(Player, transform.position, Quaternion.identity) as GameObject;
+            _playerList = new List<GameObject>();
+            for (int x = 0; x < NumberOfPlayers; x++)
+            {
+                GameObject newPlayer = Instantiate(Player, transform.position, Quaternion.identity) as GameObject;
+                _playerList.Add(newPlayer);
+            }
+           
         }
 	
         // Update is called once per frame
         void Update ()
         {
-            Camera.transform.position = new Vector3(_newPlayer.transform.position.x, _newPlayer.transform.position.y, Camera.transform.position.z); 
+            
         }
     }
 }
